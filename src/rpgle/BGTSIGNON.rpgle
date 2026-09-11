@@ -17,6 +17,8 @@ dcl-pr RTVSYS extpgm('RTVSIGNON');
 end-pr;
 
 RTVSYS(SYSNAME);
+DATED = '11/09/2026';
+HOUR = '12:00';
 SUBSYS = 'QINTER';
 SCREEN = 'QPADEV002F';
 

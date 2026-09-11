@@ -4,24 +4,32 @@
       A                                     CA03(03)
       A                                     CA12(12)
       A
-      A                                01 32'Inicio de Sesión'
+      A                                01 31'B  A  N  G  E  T  E'
+      A                                     COLOR(WHT)
+      A                                02 44'soy yo'
       A                                     COLOR(WHT)
       A
-      A                                03 48'Sistema . . . . . :'
-      A           SYSNAME       10A  O 03 70
-      A                                04 48'Subsistema  . . . :'
-      A           SUBSYS        10A  O 04 70
-      A                                05 48'Pantalla  . . . . :'
-      A           SCREEN        10A  O 05 70
-      A
-      A                                07 02'Usuario . . . . . . . . . .'
-      A           USER          10A  B 07 32
-      A                                08 02'Contraseña  . . . . . . . .'
-      A           PASS          10A  B 08 32
-      A
-      A                                22 60'Bangente C.A.'
+      A                                02 02'Sistema . . . . :'
+      A           SYSNAME       10A  O 02 20
+      A                                03 02'Subsistema  . . :'
+      A           SUBSYS        10A  O 03 20
+      A                                04 02'Pantalla  . . . :'
+      A           SCREEN        10A  O 04 20
+      A           DATED         10A  O 02 70
+      A           HOUR          10A  O 03 70
+
+      A                                06 32'Inicio de Sesión'
       A                                     COLOR(WHT)
-      A                                23 60'RIF: J-30144204-0'
+      A
+      A                                10 02'Usuario . . . . . . . . . .'
+      A           USER          10A  B 10 32
+      A                                11 02'Contraseña  . . . . . . . .'
+      A           PASS          10A  B 11 32
+      A
+      A
+      A                                23 01'Bangente C.A.'
+      A                                     COLOR(WHT)
+      A                                24 01'RIF: J-30144204-0'
       A                                     COLOR(WHT)
       A                                24 60'Plataforma Core IBM i'
       A                                     COLOR(WHT)
