@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------- */
-/* Programa : SYSNAME                                              */
+/* Programa : RTVSIGNON                                            */
 /* Autor    : Kelvin J. Infante E.                                 */
 /* Fecha    : 2026-09-11                                           */
 /* Objetivo : Retornar Nombre del sistemas IBM i                   */
@@ -12,5 +12,5 @@ PGM PARM(&SYSNAME)
   DCL VAR(&SYSNAME) TYPE(*CHAR) LEN(10)
 
   RTVNETA SYSNAME(&SYSNAME)
-
+  
 ENDPGM

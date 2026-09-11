@@ -12,11 +12,13 @@ ctl-opt dftactgrp(*no);
 
 dcl-f BGTSIGNON workstn;
 
-dcl-pr SYSN extpgm('SYSNAME');
+dcl-pr RTVSYS extpgm('RTVSIGNON');
   pSys char(10);
 end-pr;
 
-SYSN(SYSNAME);
+RTVSYS(SYSNAME);
+SUBSYS = 'QINTER';
+SCREEN = 'QPADEV002F';
 
 dou *in03 or *in12;
 
