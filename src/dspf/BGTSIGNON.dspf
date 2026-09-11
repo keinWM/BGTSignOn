@@ -1,0 +1,21 @@
+      A                                     DSPSIZ(24 80 *DS3)
+      A
+      A         R MENU01
+      A                                     CA03(03)
+      A
+      A                                01 32'Inicio de Sesión'
+      A
+      A                                03 48'Sistema . . . . . :'
+      A           SYSNAME       10A  O 03 70
+      A                                04 48'Subsistema  . . . :'
+      A           SUBSYS        10A  O 04 70
+      A                                05 48'Pantalla  . . . . :'
+      A           SCREEN        10A  O 05 70
+      A
+      A                                07 02'Usuario . . . . . . . . . . . . .'
+      A           USER          10A  B 07 38
+      A                                08 02'Contraseña  . . . . . . . . . . .'
+      A           PASS          10A  B 08 38
+      A
+      A                                23 02'F3=Salir'
+      A                                     COLOR(BLU)
