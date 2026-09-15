@@ -17,14 +17,34 @@ dcl-pr RTVSYS extpgm('RTVSIGNON');
 end-pr;
 
 RTVSYS(SYSNAME);
-DATED = '11/09/2026';
+DATED = '16/09/2026';
 HOUR = '12:00';
 SUBSYS = 'QINTER';
 SCREEN = 'QPADEV002F';
 
 dou *in03 or *in12;
+  
+  USER = *blanks;
+  PASS = *blanks;
 
   exfmt MENU01;
+
+  if *in03 or *in12;
+    leave;
+  endif;
+
+  if %trim(USER) = *blanks and %trim(PASS) = *blanks;
+    MSGTXT = 'Se requiere información de inicio de sesión.';
+    iter;
+
+  elseif %trim(USER) = *blanks;
+    MSGTXT = 'Debe Ingresar Usuario.';
+    iter;
+
+  elseif %trim(PASS) = *blanks;
+    MSGTXT = 'Debe Ingresar Contrase¦a.';
+    iter;
+  endif;
 
 enddo;
 

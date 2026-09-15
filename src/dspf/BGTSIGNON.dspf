@@ -18,13 +18,16 @@
       A           DATED         10A  O 02 70
       A           HOUR          10A  O 03 70
       A
-      A                                08 02'Inicio de Sesión'
+      A                                10 02'Inicio de Sesión'
       A                                     COLOR(WHT)
       A
-      A                                10 02'Usuario . . . . . . . . . .'
-      A           USER          10A  B 10 32
-      A                                11 02'Contraseña  . . . . . . . .'
-      A           PASS          10A  B 11 32
+      A                                12 02'Usuario . . . . . . . . . .'
+      A           USER          10A  B 12 32
+      A                                13 02'Contrase¦a  . . . . . . . .'
+      A           PASS          10A  B 13 32DSPATR(ND)
+      A
+      A           MSGTXT        45A  O 16 02
+      A                                     COLOR(WHT)
       A
       A                                10 58'GGGGGGGGG'
       A                                11 56'GGGGGGGGG    GGGG'
