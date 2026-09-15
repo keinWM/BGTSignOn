@@ -1,0 +1,29 @@
+/* --------------------------------------------------------------- */
+/* Programa : BGTUSRCHK                                            */
+/* Autor    : Kelvin J. Infante E.                                 */
+/* Fecha    : 2026-09-15                                           */
+/* Objetivo : Validacion de Usuario - BGTSIGNON                    */
+/* Proyecto : BGTSingOn                                            */
+/* Version  : 1.0                                                  */
+/* --------------------------------------------------------------- */
+
+PGM
+
+  DCL VAR(&USR) TYPE(*CHAR) LEN(10)
+  DCL VAR(&RESULT) TYPE(*CHAR) LEN(1)
+
+  CHGVAR VAR(&RESULT) VALUE('0')
+
+  CHKOBJ OBJ(QSYS/&USER) OBJTYPE(*USRPRF)
+
+  MONMSG MSGID(CPF9801) EXEC(GOTO CMDLBL(ERROR))
+
+  CHGVAR VAR(&RESULT) VALUE('1')
+
+  RETURN
+
+  ERROR:
+
+  CHGVAR VAR(&RESULT) VLUE('0')
+
+ENDPGM

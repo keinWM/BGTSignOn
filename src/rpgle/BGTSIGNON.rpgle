@@ -12,9 +12,15 @@ ctl-opt dftactgrp(*no);
 
 dcl-f BGTSIGNON workstn;
 
+dcl-pr BGTUSRCHK extpgm('BGTUSRCHK');
+  pUser char(10);
+  pResult char(1);
+end-pr;
 dcl-pr RTVSYS extpgm('RTVSIGNON');
   pSys char(10);
 end-pr;
+
+dcl-s UserExists char(1);
 
 RTVSYS(SYSNAME);
 DATED = '16/09/2026';
@@ -43,6 +49,12 @@ dou *in03 or *in12;
 
   elseif %trim(PASS) = *blanks;
     MSGTXT = 'Debe Ingresar Contrase¦a.';
+    iter;
+  endif;
+
+  BGTUSRCHK(USER : UserExists);
+  if UserExists <> '1';
+    MSGTXT = 'El usuario no existe.';
     iter;
   endif;
 
