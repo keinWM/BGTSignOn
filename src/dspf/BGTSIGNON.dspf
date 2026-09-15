@@ -4,9 +4,9 @@
       A                                     CA03(03)
       A                                     CA12(12)
       A
-      A                                01 31'B  A  N  G  E  T  E'
+      A                                01 33'B A N G E N T E'
       A                                     COLOR(WHT)
-      A                                02 44'soy yo'
+      A                                02 42'soy yo'
       A                                     COLOR(WHT)
       A
       A                                02 02'Sistema . . . . :'
@@ -17,8 +17,8 @@
       A           SCREEN        10A  O 04 20
       A           DATED         10A  O 02 70
       A           HOUR          10A  O 03 70
-
-      A                                06 32'Inicio de Sesión'
+      A
+      A                                08 02'Inicio de Sesión'
       A                                     COLOR(WHT)
       A
       A                                10 02'Usuario . . . . . . . . . .'
@@ -26,10 +26,23 @@
       A                                11 02'Contraseña  . . . . . . . .'
       A           PASS          10A  B 11 32
       A
+      A                                10 58'GGGGGGGGG'
+      A                                11 56'GGGGGGGGG    GGGG'
+      A                                12 54'GGGGGGGGG    GGGGGGGG'
+      A                                13 53'GGGGGG      GGGGGGGGGGG'
+      A                                14 52'GGGGG      GGGGGGGG GGGGG'
+      A                                15 52'GGGG     GGGGGGGG    GGGG'
+      A                                16 52'GGGG      GGGGG      GGGG'
+      A                                17 52'GGGG       GG        GGGG'
+      A                                18 52'GGGGG               GGGGG'
+      A                                19 53'GGGGGG           GGGGGG'
+      A                                20 54'GGGGGGGGGGGGGGGGGGGGG'
+      A                                21 56'GGGGGGGGGGGGGGGGG'
+      A                                22 59'GGGGGGGGGGG'
       A
-      A                                23 01'Bangente C.A.'
+      A                                23 01'RIF: J-30144204-0'
       A                                     COLOR(WHT)
-      A                                24 01'RIF: J-30144204-0'
+      A                                24 01'Banco de la Gente Emprendedora'
       A                                     COLOR(WHT)
       A                                24 60'Plataforma Core IBM i'
       A                                     COLOR(WHT)
