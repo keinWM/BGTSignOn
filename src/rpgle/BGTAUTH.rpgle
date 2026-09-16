@@ -33,6 +33,11 @@ dcl-pr QSYGETPH extpgm('QSYGETPH');
   CCSID int(10) const;
 end-pr;
 
+dcl-pr QWTSETP extpgm('QWTSETP');
+  ProfileHdl char(12);
+  ErrorCode likeDS(QUSEC);
+end-pr;
+
 dcl-pr QSYRLSPH extpgm('QSYRLSPH');
   ProfileHdl char(12);
   ErrorCode likeDS(QUSEC);
@@ -46,8 +51,6 @@ PasswordLen = 10;
 
 QSYGETPH(pUser : pPass : ProfileHandle : QUSEC : PasswordLen : CCSID);
 
-dsply ('HANDLE=' + ProfileHandle);
-
 if QUSEC.BytesAvail > 0;
   pResult = '0'; // ERROR
 else;
@@ -56,10 +59,15 @@ else;
   clear QUSEC;
   QUSEC.BytesProv = %size(QUSEC);
 
-  QSYRLSPH(ProfileHandle : QUSEC);
+  QWTSETP(ProfileHandle : QUSEC);
 
-  dsply ('RLSPH ERR=' + %char(QUSEC.BytesAvail));
-  dsply ('RLSPH MSG=' + QUSEC.MsgId);
+  if QUSEC.BytesAvail > 0;
+    pResult = '0';
+  else;
+    pResult = '1';
+  endif;
+
+  // QSYRLSPH(ProfileHandle : QUSEC);
 endif;
 
 *inlr = *on; // lr - Last Record

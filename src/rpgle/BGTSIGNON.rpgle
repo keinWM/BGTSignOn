@@ -21,6 +21,10 @@ dcl-pr BGTAUTH extpgm('BGTAUTH');
   pPass char(10);
   pResult char(1);
 end-pr;
+dcl-pr QCMDEXC extpgm('QCMDEXC');
+  Command char(3000) const options(*varsize);
+  Length packed(15:5) const;
+end-pr;
 dcl-pr RTVSYS extpgm('RTVSIGNON');
   pSys char(10);
 end-pr;
@@ -69,8 +73,10 @@ dou *in03 or *in12;
     MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
     iter;
   endif;
-  MSGTXT = 'Autenticación Exitosa';
-  iter;
+
+  QCMDEXC('GO MAIN' : 7); // o tambien podria ser ('GO MAIN' : %len('GO MAIN'));
+
+  leave;
 
 enddo;
 // BUCLE PRINCIPAL
