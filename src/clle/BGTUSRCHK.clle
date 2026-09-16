@@ -7,23 +7,22 @@
 /* Version  : 1.0                                                  */
 /* --------------------------------------------------------------- */
 
-PGM
+PGM PARM(&USER &RESULT)
 
-  DCL VAR(&USR) TYPE(*CHAR) LEN(10)
+  DCL VAR(&USER) TYPE(*CHAR) LEN(10)
   DCL VAR(&RESULT) TYPE(*CHAR) LEN(1)
 
-  CHGVAR VAR(&RESULT) VALUE('0')
+  CHGVAR VAR(&RESULT) VALUE('0') /* CHGVAR - Change Variable */
 
-  CHKOBJ OBJ(QSYS/&USER) OBJTYPE(*USRPRF)
+  CHKOBJ OBJ(QSYS/&USER) OBJTYPE(*USRPRF) /* CHKOBJ - Check Objet */
 
-  MONMSG MSGID(CPF9801) EXEC(GOTO CMDLBL(ERROR))
+  MONMSG MSGID(CPF9801) EXEC(DO) /* MONMSG - Monitor Message*/
+
+    CHGVAR VAR(&RESULT) VALUE('0')
+    RETURN
+
+  ENDDO
 
   CHGVAR VAR(&RESULT) VALUE('1')
-
-  RETURN
-
-  ERROR:
-
-  CHGVAR VAR(&RESULT) VLUE('0')
 
 ENDPGM
