@@ -22,6 +22,10 @@ dcl-pr BGTGETPRF extpgm('BGTGETPRF');
   pInlPgm char(20);
   pInlMnu char(10);
 end-pr;
+dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG');
+  pUser char(10);
+  pResult char(1) const;
+end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC');
   Command char(3000) const options(*varsize);
   Length packed(15:5) const;
@@ -36,6 +40,7 @@ dcl-s InlMnu char(10);
 dcl-s Cmd char(50);
 
 RTVSYS(SYSNAME);
+ENVIRON = 'DESARROLLO';
 DATED = '16/09/2026';
 HOUR = '12:00';
 SUBSYS = 'QINTER';
@@ -67,18 +72,21 @@ dou *in03 or *in12;
 
   BGTAUTH(USER : PASS : AuthResult);
   if AuthResult <> '1';
+    BGTSIGNLOG(USER : 'F');
     MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
     iter;
+  else;
+    BGTSIGNLOG(USER : 'S');
   endif;
 
   BGTGETPRF(USER : InlPgm : InlMnu);
   if %trim(InlPgm) <> '*NONE';
     Cmd = 'CALL ' + %trim(InlPgm);
-    QCMDEXC(Cmd : %len(%trim(Cmd)));
   else;
     Cmd = 'GO ' + %trim(InlMnu);
-    QCMDEXC(Cmd : %len(%trim(Cmd)));
   endif;
+
+  QCMDEXC(Cmd : %len(%trim(Cmd)));
 
   leave;
 

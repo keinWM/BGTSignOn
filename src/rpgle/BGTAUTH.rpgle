@@ -32,12 +32,10 @@ dcl-pr QSYGETPH extpgm('QSYGETPH');
   PasswordLen int(10) const;
   CCSID int(10) const;
 end-pr;
-
 dcl-pr QWTSETP extpgm('QWTSETP');
   ProfileHdl char(12);
   ErrorCode likeDS(QUSEC);
 end-pr;
-
 dcl-pr QSYRLSPH extpgm('QSYRLSPH');
   ProfileHdl char(12);
   ErrorCode likeDS(QUSEC);

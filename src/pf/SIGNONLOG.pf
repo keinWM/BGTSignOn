@@ -1,0 +1,7 @@
+     A          R SIGNONR
+     A
+     A            USER          10A
+     A            LOGDATE       10A
+     A            LOGTIME       10A
+     A            DSPNAME       10A
+     A            RESULT        01A
