@@ -14,7 +14,7 @@
       A                                03 02'Subsistema  . . :'
       A           SUBSYS        10A  O 03 20
       A                                04 02'Pantalla  . . . :'
-      A           SCREEN        10A  O 04 20
+      A           JOBNAME       11A  O 04 20
       A           ENVIRON       10A  O 02 70
       A           DATED         10A  O 03 70
       A           HOUR          10A  O 04 70

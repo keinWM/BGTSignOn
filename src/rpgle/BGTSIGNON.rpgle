@@ -5,7 +5,6 @@
 // Fecha    : 2026-09-11
 // Objetivo : Inicio de Sesion al QSYGETPH - BGTSIGNON
 // Proyecto : BGTSIGNON
-// Version  : 1.0
 // ---------------------------------------------------------------
 
 ctl-opt dftactgrp(*no);
@@ -24,14 +23,19 @@ dcl-pr BGTGETPRF extpgm('BGTGETPRF');
 end-pr;
 dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG');
   pUser char(10);
+  pDate char(10);
+  pTime char(10);
+  pDspName char(11);
   pResult char(1) const;
+end-pr;
+dcl-pr RTVSIGN extpgm('RTVSIGNON');
+  pSysName char(10);
+  pJobName char(11);
+  PSubSys char(10);
 end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC');
   Command char(3000) const options(*varsize);
   Length packed(15:5) const;
-end-pr;
-dcl-pr RTVSYS extpgm('RTVSIGNON');
-  pSys char(10);
 end-pr;
 
 dcl-s AuthResult char(1);
@@ -39,12 +43,10 @@ dcl-s InlPgm char(20);
 dcl-s InlMnu char(10);
 dcl-s Cmd char(50);
 
-RTVSYS(SYSNAME);
+RTVSIGN(SYSNAME : JOBNAME : SUBSYS);
 ENVIRON = 'DESARROLLO';
-DATED = '16/09/2026';
-HOUR = '12:00';
-SUBSYS = 'QINTER';
-SCREEN = 'QPADEV002F';
+DATED = %char(%date():*dmy);
+HOUR = %char(%time():*hms);
 
 // BUCLE PRINCIPAL
 dou *in03 or *in12;
@@ -72,11 +74,11 @@ dou *in03 or *in12;
 
   BGTAUTH(USER : PASS : AuthResult);
   if AuthResult <> '1';
-    BGTSIGNLOG(USER : 'F');
+    BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'F');
     MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
     iter;
   else;
-    BGTSIGNLOG(USER : 'S');
+    BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'S');
   endif;
 
   BGTGETPRF(USER : InlPgm : InlMnu);

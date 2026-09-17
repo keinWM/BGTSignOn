@@ -7,10 +7,18 @@
 /* Version  : 1.0                                                  */
 /* --------------------------------------------------------------- */
 
-PGM PARM(&SYSNAME)
+PGM PARM(&SYSNAME &JOBNAME &SUBSYS)
 
   DCL VAR(&SYSNAME) TYPE(*CHAR) LEN(10)
+  DCL VAR(&JOBNAME) TYPE(*CHAR) LEN(11)
+  DCL VAR(&SUBSYS) TYPE(*CHAR) LEN(10)
+  DCL VAR(&RCVVAR) TYPE(*CHAR) LEN(256)
 
   RTVNETA SYSNAME(&SYSNAME)
+  RTVJOBA JOB(&JOBNAME)
+
+  CALL PGM(QSYS/QUSRJOBI) PARM(&RCVVAR X'00000100' 'JOBI0200' '*' ' ')
+
+  CHGVAR VAR(&SUBSYS) VALUE(%SST(&RCVVAR 63 10))
   
 ENDPGM

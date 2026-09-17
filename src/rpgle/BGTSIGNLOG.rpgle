@@ -13,19 +13,16 @@ dcl-f SIGNONLOG usage(*output);
 
 dcl-pi *n;
   pUser char(10);
+  pDate char(10);
+  pTime char(10);
+  pDspName char(11);
   pResult char(1);
 end-pi;
 
-dcl-s Fecha char(10);
-dcl-s Hora char(10);
-
-Fecha = %char(%date());
-Hora = %char(%time());
-
 USER = pUser;
-LOGDATE = Fecha;
-LOGTIME = Hora;
-DSPNAME = 'QPADEV002F';
+LOGDATE = pDate;
+LOGTIME = pTime;
+DSPNAME = pDspName;
 RESULT = pResult;
 
 write SIGNONR;
