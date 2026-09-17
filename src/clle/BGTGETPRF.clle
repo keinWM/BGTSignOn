@@ -1,0 +1,17 @@
+/* --------------------------------------------------------------- */
+/* Programa : BGTGETPRF                                            */
+/* Autor    : Kelvin J. Infante E.                                 */
+/* Fecha    : 2026-09-17                                           */
+/* Objetivo : Validar INLPGM, INLMNU - BGTSIGNON                   */
+/* Proyecto : BGTSingOn                                            */
+/* --------------------------------------------------------------- */
+
+PGM PARM(&USER &INLPGM &INLMNU)
+
+  DCL VAR(&USER) TYPE(*CHAR) LEN(10)
+  DCL VAR(&INLPGM) TYPE(*CHAR) LEN(20)
+  DCL VAR(&INLMNU) TYPE(*CHAR) LEN(10)
+
+  RTVUSRPRF USRPRF(&USER) INLPGM(&INLPGM) INLMNU(&INLMNU)
+
+ENDPGM

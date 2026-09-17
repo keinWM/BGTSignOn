@@ -12,14 +12,15 @@ ctl-opt dftactgrp(*no);
 
 dcl-f BGTSIGNON workstn;
 
-dcl-pr BGTUSRCHK extpgm('BGTUSRCHK');
-  pUser char(10);
-  pResult char(1);
-end-pr;
 dcl-pr BGTAUTH extpgm('BGTAUTH');
   pUser char(10);
   pPass char(10);
   pResult char(1);
+end-pr;
+dcl-pr BGTGETPRF extpgm('BGTGETPRF');
+  pUser char(10);
+  pInlPgm char(20);
+  pInlMnu char(10);
 end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC');
   Command char(3000) const options(*varsize);
@@ -29,8 +30,10 @@ dcl-pr RTVSYS extpgm('RTVSIGNON');
   pSys char(10);
 end-pr;
 
-dcl-s UserExists char(1);
 dcl-s AuthResult char(1);
+dcl-s InlPgm char(20);
+dcl-s InlMnu char(10);
+dcl-s Cmd char(50);
 
 RTVSYS(SYSNAME);
 DATED = '16/09/2026';
@@ -62,19 +65,20 @@ dou *in03 or *in12;
     iter;
   endif;
 
-  BGTUSRCHK(USER : UserExists);
-  if UserExists <> '1';
-    MSGTXT = 'El Usuario no Existe.';
-    iter;
-  endif;
-
   BGTAUTH(USER : PASS : AuthResult);
   if AuthResult <> '1';
     MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
     iter;
   endif;
 
-  QCMDEXC('GO MAIN' : 7); // o tambien podria ser ('GO MAIN' : %len('GO MAIN'));
+  BGTGETPRF(USER : InlPgm : InlMnu);
+  if %trim(InlPgm) <> '*NONE';
+    Cmd = 'CALL ' + %trim(InlPgm);
+    QCMDEXC(Cmd : %len(%trim(Cmd)));
+  else;
+    Cmd = 'GO ' + %trim(InlMnu);
+    QCMDEXC(Cmd : %len(%trim(Cmd)));
+  endif;
 
   leave;
 
