@@ -13,10 +13,10 @@ dcl-f SIGNONLOG usage(*output);
 
 dcl-pi *n;
   pUser char(10);
-  pDate char(10);
-  pTime char(10);
+  pDate char(08);
+  pTime char(08);
   pDspName char(11);
-  pResult char(1);
+  pResult char(20);
 end-pi;
 
 USER = pUser;

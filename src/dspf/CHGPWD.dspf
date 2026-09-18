@@ -1,0 +1,39 @@
+      A                                     DSPSIZ(24 80 *DS3)
+      A
+      A         R MENU04
+      A
+      A                                     CA03(03)
+      A                                     CA12(12)
+      A
+      A                                01 30'Cambiar Contrase¦a'
+      A
+      A                                03 02'Perfil de usuario'
+      A                                03 20'. . . . . . . . . . . . :'
+      A           USER          10A  O 03 47
+      A                                04 02'Ultimo cambio de contrase¦a'
+      A                                04 28'. . . . . . . . :'
+      A           DATED         10A  O 03 47
+      A
+      A                                07 02'Teclee contrase¦a, pulse INTRO.'
+      A                                09 04'Contrase¦a actual'
+      A                                09 22'. . . . . . . . . . . .'
+      A           PWDACT        10A  B 09 47
+      A                                11 04'Contrase¦a nueva'
+      A                                11 22'. . . . . . . . . . . .'
+      A           PWDNEW        10A  B 11 47
+      A                                13 04'Contrase¦a nueva (verificar)'
+      A                                13 36'. . . . .'
+      A           PWDNEWV       10A  B 13 47
+      A
+      A                                21 02'F3=Salir'
+      A                                     COLOR(BLU)
+      A                                21 30'F9=Visualizar reglas'
+      A                                     COLOR(BLU)
+      A                                21 68'F12=Cancelar'
+      A                                     COLOR(BLU)
+      A                                23 02'RIF: J-30144204-0'
+      A                                     COLOR(WHT)
+      A                                24 02'Banco de la Gente Emprendedora'
+      A                                     COLOR(WHT)
+      A                                24 60'Plataforma Core IBM i'
+      A                                     COLOR(WHT)

@@ -1,7 +1,7 @@
      A          R SIGNONR
      A
      A            USER          10A
-     A            LOGDATE       10A
-     A            LOGTIME       10A
+     A            LOGDATE       08A
+     A            LOGTIME       08A
      A            DSPNAME       11A
-     A            RESULT        01A
+     A            RESULT        20A

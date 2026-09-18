@@ -11,89 +11,130 @@ ctl-opt dftactgrp(*no);
 
 dcl-f BGTSIGNON workstn;
 
-dcl-pr BGTAUTH extpgm('BGTAUTH');
+// Declaracion Prototipos
+dcl-pr BGTAUTH extpgm('BGTAUTH'); // RPGLE
   pUser char(10);
   pPass char(10);
   pResult char(1);
 end-pr;
-dcl-pr BGTGETPRF extpgm('BGTGETPRF');
+dcl-pr BGTGETPRF extpgm('BGTGETPRF'); // CLLE
   pUser char(10);
   pInlPgm char(20);
   pInlMnu char(10);
 end-pr;
-dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG');
+dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
   pUser char(10);
-  pDate char(10);
-  pTime char(10);
+  pDate char(08);
+  pTime char(08);
   pDspName char(11);
-  pResult char(1) const;
+  pResult char(20) const;
 end-pr;
-dcl-pr RTVSIGN extpgm('RTVSIGNON');
+dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
   pJobName char(11);
   PSubSys char(10);
 end-pr;
-dcl-pr QCMDEXC extpgm('QCMDEXC');
+dcl-pr BGTPWDEXP extpgm('BGTPWDEXP');
+  pUser char(10);
+end-pr;
+dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
   Command char(3000) const options(*varsize);
   Length packed(15:5) const;
 end-pr;
+// Declaracion Prototipos
 
+// Declaracion Variables
 dcl-s AuthResult char(1);
 dcl-s InlPgm char(20);
 dcl-s InlMnu char(10);
 dcl-s Cmd char(50);
+// Declaracion Variables
 
+// Informacion de IBM (dinámica)
 RTVSIGN(SYSNAME : JOBNAME : SUBSYS);
-ENVIRON = 'DESARROLLO';
+
+select;
+  when %subst(SYSNAME:1:1) = 'P';
+    ENVIRON = 'PRODUCCION';
+  when %subst(SYSNAME:1:1) = 'Q';
+    ENVIRON = 'CALIDAD';
+  when %subst(SYSNAME:1:1) = 'D';
+    ENVIRON = 'DESARROLLO';
+endsl;
+
 DATED = %char(%date():*dmy);
 HOUR = %char(%time():*hms);
+// Informacion de IBM (dinámica)
 
-// BUCLE PRINCIPAL
+
+// Bucle Principal
 dou *in03 or *in12;
 
+  // Limpiar Campo de Contraseña
   PASS = *blanks;
   
   exfmt MENU01;
 
+  // Salir del Sign On al presionar F3 o F12
   if *in03 or *in12;
     leave;
   endif;
+  // Salir del Sign On al presionar F3 o F12
 
   clear MSGTXT;
 
+  // Validar Campos Vacíos
   if %trim(USER) = *blanks and %trim(PASS) = *blanks;
-    MSGTXT = 'Se requiere información de inicio de sesión.';
+    MSGTXT = 'Se Requiere Información de Inicio de Sesión.';
     iter;
   elseif %trim(USER) = *blanks;
-    MSGTXT = 'Debe Ingresar Usuario.';
+    MSGTXT = 'Debe Ingresar un Usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
-    MSGTXT = 'Debe Ingresar Contrase¦a.';
+    MSGTXT = 'Debe Ingresar una Contrase¦a.';
     iter;
   endif;
+  // Validar Campos Vacíos
 
+  // Validacion de Usuario y Contraseña
   BGTAUTH(USER : PASS : AuthResult);
-  if AuthResult <> '1';
-    BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'F');
-    MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
-    iter;
-  else;
-    BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'S');
-  endif;
+  select;
+    when AuthResult = '1';
+      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'SUCCESS');
+    when AuthResult = '3';
+      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'PROFILE_DISABLED');
+      MSGTXT = 'Perfil Deshabilitado';
+      iter;
+    when AuthResult = '4';
+      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'PASSWORD_EXPIRED');
 
+      BGTPWDEXP(USER);
+
+      clear USER;
+      
+      iter;
+    other;
+      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'FAIL');
+      MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
+      iter;
+  endsl;
+  // Validacion de Usuario y Contraseña
+
+  // Validacion del Programa o Menu Inicial del Usuario
   BGTGETPRF(USER : InlPgm : InlMnu);
   if %trim(InlPgm) <> '*NONE';
     Cmd = 'CALL ' + %trim(InlPgm);
   else;
     Cmd = 'GO ' + %trim(InlMnu);
   endif;
+  // Validacion del Programa o Menu Inicial del Usuario
 
   QCMDEXC(Cmd : %len(%trim(Cmd)));
 
   leave;
 
 enddo;
-// BUCLE PRINCIPAL
+// Bucle Principal
 
 *inlr = *on;
 

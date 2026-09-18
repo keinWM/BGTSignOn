@@ -1,0 +1,35 @@
+      A                                     DSPSIZ(24 80 *DS3)
+      A
+      A         R MENU02
+      A
+      A                                     CA03(03)
+      A
+      A                                01 35'Información'
+      A                                     COLOR(WHT)
+      A
+      A                                02 61'Sistema:'
+      A           SYSNAME       10A  O 02 72
+      A
+      A                                05 02'La contrase¦a ha caducado.'
+      A                                05 29'Se debe cambiar la contrase¦a'
+      A                                05 59'para continuar'
+      A                                06 02'la peticion de inicio de sesión.'
+      A
+      A                                08 02'Inicio de sesión anterior'
+      A                                08 29'. . . . . . . . :'
+      A           DATED         08A  O 08 49
+      A                                08 58'-'
+      A           HOUR          08A  O 08 60
+      A
+      A                                19 02'Pulse INTRO para'
+      A                                     COLOR(BLU)
+      A                                19 19'cambiar la contrase¦a.'
+      A                                     COLOR(BLU)
+      A                                21 02'F3=Salir'
+      A                                     COLOR(BLU)
+      A                                23 02'RIF: J-30144204-0'
+      A                                     COLOR(WHT)
+      A                                24 02'Banco de la Gente Emprendedora'
+      A                                     COLOR(WHT)
+      A                                24 60'Plataforma Core IBM i'
+      A                                     COLOR(WHT)
