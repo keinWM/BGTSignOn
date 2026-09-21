@@ -35,6 +35,16 @@ dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
   pJobName char(10);
   pResult char(20) const;
 end-pr;
+dcl-pr BGTUSRSTS extpgm('BGTUSRSTS');
+  pUser char(10);
+  pPreSignOn char(19);
+  pPassChgDate char(19);
+  pDatePassExp char(19);
+  pDaysExp char(2);
+  pPassExp char(3);
+  pStatus char(8);
+  pSignOnInvalid char(1);
+end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
   pJobName char(10);
@@ -53,6 +63,13 @@ dcl-s InlMnu char(10);
 dcl-s Cmd char(50);
 // Declaracion Variables
 
+dcl-s pPreSignOn timestamp;
+dcl-s pPassChgDate timestamp;
+dcl-s pDaysExp zoned(3:0);
+dcl-s pPassExp char(3);
+dcl-s pStatus char(10);
+dcl-s pSignOnInvalid zoned(3:0);
+
 // Informacion de IBM (dinámica)
 RTVSIGN(SYSNAME : JOBNAME : SUBSYS);
 
@@ -67,6 +84,8 @@ endsl;
 
 DATE = %char(%date() : *dmy);
 TIME = %char(%time() : *hms);
+
+// BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid);
 // Informacion de IBM (dinámica)
 
 
@@ -101,6 +120,9 @@ dou *in03 or *in12;
 
   // Validacion de Usuario y Contraseña
   BGTAUTH(USER : PASS : AuthResult);
+
+  BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid);
+
   select;
     when AuthResult = '1';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
