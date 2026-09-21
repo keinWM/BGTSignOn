@@ -36,6 +36,7 @@ dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
 end-pr;
 dcl-pr BGTPWDEXP extpgm('BGTPWDEXP');
   pUser char(10);
+  pSysName char(10);
 end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
   Command char(3000) const options(*varsize);
@@ -109,7 +110,7 @@ dou *in03 or *in12;
     when AuthResult = '4';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
 
-      BGTPWDEXP(USER);
+      BGTPWDEXP(USER : SYSNAME);
 
       clear USER;
       

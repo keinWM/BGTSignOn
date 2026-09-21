@@ -7,7 +7,7 @@
       A                                01 35'Información'
       A                                     COLOR(WHT)
       A
-      A                                02 61'Sistema:'
+      A                                02 62'Sistema:'
       A           SYSNAME       10A  O 02 72
       A
       A                                05 02'La contraseña ha caducado.'
