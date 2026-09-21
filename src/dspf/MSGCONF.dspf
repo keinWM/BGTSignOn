@@ -7,7 +7,7 @@
       A                                01 36'Confirmar'
       A                                     COLOR(WHT)
       A
-      A                                08 02'Salir del cambio de contraseña'
+      A                                08 02'Salir del cambio de contrase¦a'
       A                                08 33'. . .'
       A           RESP          01A  B 08 39
       A

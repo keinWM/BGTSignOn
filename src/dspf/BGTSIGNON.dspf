@@ -24,25 +24,25 @@
       A
       A                                12 02'Usuario . . . . . . . . . .'
       A           USER          10A  B 12 32
-      A                                13 02'Contraseña  . . . . . . . .'
+      A                                13 02'Contrase¦a  . . . . . . . .'
       A           PASS          10A  B 13 32DSPATR(ND)
       A
       A           MSGTXT        45A  O 16 02
       A                                     COLOR(WHT)
       A
-      A                                10 57'GGGGGGGGG'
-      A                                11 55'GGGGGGGGG    GGGG'
-      A                                12 53'GGGGGGGGG    GGGGGGGG'
-      A                                13 52'GGGGGG      GGGGGGGGGGG'
-      A                                14 51'GGGGG      GGGGGGGG GGGGG'
-      A                                15 51'GGGG     GGGGGGGG    GGGG'
-      A                                16 51'GGGG      GGGGG      GGGG'
-      A                                17 51'GGGG       GG        GGGG'
-      A                                18 51'GGGGG               GGGGG'
-      A                                19 52'GGGGGG           GGGGGG'
-      A                                20 53'GGGGGGGGGGGGGGGGGGGGG'
-      A                                21 55'GGGGGGGGGGGGGGGGG'
-      A                                22 58'GGGGGGGGGGG'
+      A                                10 57'GGGGGGGGGG'
+      A                                11 55'GGGGGGGGGG    GGGG'
+      A                                12 53'GGGGGGGGGG    GGGGGGGG'
+      A                                13 52'GGGGGG       GGGGGGGGGGG'
+      A                                14 51'GGGGG       GGGGGGGG GGGGG'
+      A                                15 51'GGGG      GGGGGGGG    GGGG'
+      A                                16 51'GGGG       GGGGG      GGGG'
+      A                                17 51'GGGG        GG        GGGG'
+      A                                18 51'GGGGGG              GGGGGG'
+      A                                19 52'GGGGGGG          GGGGGGG'
+      A                                20 53'GGGGGGGGGGGGGGGGGGGGGG'
+      A                                21 55'GGGGGGGGGGGGGGGGGG'
+      A                                22 58'GGGGGGGGGGGG'
       A
       A                                23 01'RIF: J-30144204-0'
       A                                     COLOR(WHT)

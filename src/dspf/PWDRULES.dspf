@@ -5,13 +5,13 @@
       A                                     CA03(03)
       A                                     CA12(12)
       A
-      A                                01 31'Reglas de Contraseña'
+      A                                01 31'Reglas de Contrase¦a'
       A                                     COLOR(WHT)
       A
-      A                                03 02'Longitud mínima de contraseña'
+      A                                03 02'Longitud mínima de contrase¦a'
       A                                03 33'. . . . . . :'
       A                                03 48'8'
-      A                                04 02'Longitud máxima de contraseña'
+      A                                04 02'Longitud máxima de contrase¦a'
       A                                04 33'. . . . . . :'
       A                                04 48'8'
       A                                05 02'Limitar caracteres adyacentes'

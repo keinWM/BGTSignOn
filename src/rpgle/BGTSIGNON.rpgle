@@ -94,7 +94,7 @@ dou *in03 or *in12;
     MSGTXT = 'Debe Ingresar un Usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
-    MSGTXT = 'Debe Ingresar una Contraseña.';
+    MSGTXT = 'Debe Ingresar una Contrase¦a.';
     iter;
   endif;
   // Validar Campos Vacíos
@@ -117,9 +117,12 @@ dou *in03 or *in12;
         exfmt INFORMAT;
 
         if *in03;
+          *in03 = *off;
+
           exfmt CONFIRM;
 
           if *in12;
+            *in12 = *off;
             iter;
           elseif RESP = 'Y';
             leave;
@@ -134,7 +137,7 @@ dou *in03 or *in12;
       iter;
     other;
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
-      MSGTXT = 'Usuario o Contraseña Incorrectos.';
+      MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
       iter;
   endsl;
   // Validacion de Usuario y Contraseña
