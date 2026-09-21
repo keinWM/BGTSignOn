@@ -1,29 +1,32 @@
       A                                     DSPSIZ(24 80 *DS3)
       A
-      A         R MENU04
+      A         R CHANGEPWD
       A
       A                                     CA03(03)
       A                                     CA12(12)
       A
-      A                                01 30'Cambiar Contrase¦a'
+      A                                01 30'Cambiar Contraseña'
       A
       A                                03 02'Perfil de usuario'
       A                                03 20'. . . . . . . . . . . . :'
       A           USER          10A  O 03 47
-      A                                04 02'Ultimo cambio de contrase¦a'
-      A                                04 28'. . . . . . . . :'
-      A           DATED         10A  O 03 47
+      A                                04 02'Ultimo cambio de contraseña'
+      A                                04 30'. . . . . . . :'
+      A           DATE          08A  O 04 46
       A
-      A                                07 02'Teclee contrase¦a, pulse INTRO.'
-      A                                09 04'Contrase¦a actual'
+      A                                07 02'Teclee contraseña, pulse INTRO.'
+      A                                09 04'Contraseña actual'
       A                                09 22'. . . . . . . . . . . .'
-      A           PWDACT        10A  B 09 47
-      A                                11 04'Contrase¦a nueva'
+      A           PASS          10A  B 09 47
+      A                                11 04'Contraseña nueva'
       A                                11 22'. . . . . . . . . . . .'
-      A           PWDNEW        10A  B 11 47
-      A                                13 04'Contrase¦a nueva (verificar)'
+      A           PASSNEW       10A  B 11 47
+      A                                13 04'Contraseña nueva (verificar)'
       A                                13 36'. . . . .'
-      A           PWDNEWV       10A  B 13 47
+      A           PASSNEWV      10A  B 13 47
+      A
+      A           MSGTXT        45A  O 16 02
+      A                                     COLOR(WHT)
       A
       A                                21 02'F3=Salir'
       A                                     COLOR(BLU)

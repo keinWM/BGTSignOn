@@ -1,6 +1,6 @@
       A                                     DSPSIZ(24 80 *DS3)
       A
-      A         R MENU01
+      A         R SIGNON
       A                                     CA03(03)
       A                                     CA12(12)
       A
@@ -16,15 +16,15 @@
       A                                04 02'Pantalla  . . . :'
       A           JOBNAME       11A  O 04 20
       A           ENVIRON       10A  O 02 70
-      A           DATED         08A  O 03 70
-      A           HOUR          08A  O 04 70
+      A           DATE          08A  O 03 70
+      A           TIME          08A  O 04 70
       A
       A                                10 02'Inicio de Sesión'
       A                                     COLOR(WHT)
       A
       A                                12 02'Usuario . . . . . . . . . .'
       A           USER          10A  B 12 32
-      A                                13 02'Contrase¦a  . . . . . . . .'
+      A                                13 02'Contraseña  . . . . . . . .'
       A           PASS          10A  B 13 32DSPATR(ND)
       A
       A           MSGTXT        45A  O 16 02

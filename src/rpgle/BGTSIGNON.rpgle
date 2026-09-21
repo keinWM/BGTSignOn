@@ -40,6 +40,7 @@ end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
   Command char(3000) const options(*varsize);
   Length packed(15:5) const;
+  DBCS char(3) const options(*nopass);
 end-pr;
 // Declaracion Prototipos
 
@@ -62,8 +63,8 @@ select;
     ENVIRON = 'DESARROLLO';
 endsl;
 
-DATED = %char(%date():*dmy);
-HOUR = %char(%time():*hms);
+DATE = %char(%date() : *dmy);
+TIME = %char(%time() : *hms);
 // Informacion de IBM (dinámica)
 
 
@@ -73,7 +74,7 @@ dou *in03 or *in12;
   // Limpiar Campo de Contraseña
   PASS = *blanks;
   
-  exfmt MENU01;
+  exfmt SIGNON;
 
   // Salir del Sign On al presionar F3 o F12
   if *in03 or *in12;
@@ -91,7 +92,7 @@ dou *in03 or *in12;
     MSGTXT = 'Debe Ingresar un Usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
-    MSGTXT = 'Debe Ingresar una Contrase¦a.';
+    MSGTXT = 'Debe Ingresar una Contraseña.';
     iter;
   endif;
   // Validar Campos Vacíos
@@ -100,13 +101,13 @@ dou *in03 or *in12;
   BGTAUTH(USER : PASS : AuthResult);
   select;
     when AuthResult = '1';
-      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'SUCCESS');
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
     when AuthResult = '3';
-      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'PROFILE_DISABLED');
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
       MSGTXT = 'Perfil Deshabilitado';
       iter;
     when AuthResult = '4';
-      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'PASSWORD_EXPIRED');
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
 
       BGTPWDEXP(USER);
 
@@ -114,8 +115,8 @@ dou *in03 or *in12;
       
       iter;
     other;
-      BGTSIGNLOG(USER : DATED : HOUR : JOBNAME : 'FAIL');
-      MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
+      MSGTXT = 'Usuario o Contraseña Incorrectos.';
       iter;
   endsl;
   // Validacion de Usuario y Contraseña
@@ -129,7 +130,7 @@ dou *in03 or *in12;
   endif;
   // Validacion del Programa o Menu Inicial del Usuario
 
-  QCMDEXC(Cmd : %len(%trim(Cmd)));
+  QCMDEXC(Cmd : %len(%trim(Cmd)) : ' ');
 
   leave;
 

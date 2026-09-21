@@ -17,21 +17,17 @@ dcl-pi *n;
   pUser char(10);
 end-pi;
 
-dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
-  Command char(3000) const options(*varsize);
-  Length packed(15:5) const;
-end-pr;
-
-dcl-s Cmd char(50);
+USER = pUser;
+DATE = %char(%date() : *dmy);
 
 dow *on;
 
   RESP = 'Y';
-  
-  exfmt MENU02;
+
+  exfmt INFORMAT;
 
   if *in03;
-    exfmt MENU03;
+    exfmt CONFIRM;
 
     if *in12;
       iter;
@@ -42,9 +38,7 @@ dow *on;
     iter;
   endif;
 
-  dsply pUser;
-
-  exfmt MENU04;
+  exfmt CHANGEPWD;
 enddo;
 
 *inlr = *on;

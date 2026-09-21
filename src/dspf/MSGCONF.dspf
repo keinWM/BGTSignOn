@@ -1,13 +1,13 @@
       A                                     DSPSIZ(24 80 *DS3)
       A
-      A         R MENU03
+      A         R CONFIRM
       A
       A                                     CA12(12)
       A
       A                                01 36'Confirmar'
       A                                     COLOR(WHT)
       A
-      A                                08 02'Salir del cmabio de contrase¦a'
+      A                                08 02'Salir del cambio de contraseña'
       A                                08 33'. . .'
       A           RESP          01A  B 08 39
       A

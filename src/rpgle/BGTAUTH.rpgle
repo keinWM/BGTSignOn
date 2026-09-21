@@ -49,15 +49,12 @@ PasswordLen = 10;
 
 QSYGETPH(pUser : pPass : ProfileHandle : QUSEC : PasswordLen : CCSID);
 
-// dsply ('MSGID = ' + QUSEC.MsgId);
-
 if QUSEC.BytesAvail > 0;
 
   select;
     when QUSEC.MsgId = 'CPF22E3'; // PROFILE_DISABLED
       pResult = '3';
     when QUSEC.MsgId = 'CPF22E4'; // PASSWORD_EXPIRED
-      dsply ProfileHandle;
       pResult = '4';
     other;
       pResult = '0';
