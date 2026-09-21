@@ -9,7 +9,13 @@
 
 ctl-opt dftactgrp(*no);
 
+// Declaracion Vistas
 dcl-f BGTSIGNON workstn;
+dcl-f CHGPWD workstn;
+dcl-f MSGCONF workstn;
+dcl-f MSGINF workstn;
+dcl-f PWDRULES workstn;
+// Declaracion Vistas
 
 // Declaracion Prototipos
 dcl-pr BGTAUTH extpgm('BGTAUTH'); // RPGLE
@@ -34,14 +40,9 @@ dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pJobName char(11);
   PSubSys char(10);
 end-pr;
-dcl-pr BGTPWDEXP extpgm('BGTPWDEXP');
-  pUser char(10);
-  pSysName char(10);
-end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
   Command char(3000) const options(*varsize);
   Length packed(15:5) const;
-  DBCS char(3) const options(*nopass);
 end-pr;
 // Declaracion Prototipos
 
@@ -81,8 +82,8 @@ dou *in03 or *in12;
   if *in03 or *in12;
     leave;
   endif;
-  // Salir del Sign On al presionar F3 o F12
 
+  // Limpiar Variables MSGTXT
   clear MSGTXT;
 
   // Validar Campos Vacíos
@@ -110,9 +111,25 @@ dou *in03 or *in12;
     when AuthResult = '4';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
 
-      BGTPWDEXP(USER : SYSNAME);
+      dow *on;
+        RESP = 'Y';
 
-      clear USER;
+        exfmt INFORMAT;
+
+        if *in03;
+          exfmt CONFIRM;
+
+          if *in12;
+            iter;
+          elseif RESP = 'Y';
+            leave;
+          endif;
+        endif;
+
+        clear PASS;
+
+        exfmt CHANGEPWD;
+      enddo;
       
       iter;
     other;
