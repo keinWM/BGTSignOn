@@ -17,8 +17,16 @@ dcl-pi *n;
   pUser char(10);
 end-pi;
 
+dcl-pr RTVSIGN extpgm('RTVSIGNON');
+  pSysName char(10);
+  pJobName char(11);
+  pSusSys char(10);
+end-pr;
+
+RTVSIGN(SYSNAME);
 USER = pUser;
 DATE = %char(%date() : *dmy);
+TIME = %char(%time() : *hms);
 
 dow *on;
 
