@@ -3,5 +3,5 @@
      A            USER          10A
      A            LOGDATE       08A
      A            LOGTIME       08A
-     A            DSPNAME       11A
+     A            JOBNAME       10A
      A            RESULT        20A

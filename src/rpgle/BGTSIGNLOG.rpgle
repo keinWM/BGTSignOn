@@ -15,14 +15,14 @@ dcl-pi *n;
   pUser char(10);
   pDate char(08);
   pTime char(08);
-  pDspName char(11);
+  pJobName char(10);
   pResult char(20);
 end-pi;
 
 USER = pUser;
 LOGDATE = pDate;
 LOGTIME = pTime;
-DSPNAME = pDspName;
+JOBNAME = pJobName;
 RESULT = pResult;
 
 write SIGNONR;

@@ -25,19 +25,19 @@ dcl-pr BGTAUTH extpgm('BGTAUTH'); // RPGLE
 end-pr;
 dcl-pr BGTGETPRF extpgm('BGTGETPRF'); // CLLE
   pUser char(10);
-  pInlPgm char(20);
+  pInlPgm char(10);
   pInlMnu char(10);
 end-pr;
 dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
   pUser char(10);
   pDate char(08);
   pTime char(08);
-  pDspName char(11);
+  pJobName char(10);
   pResult char(20) const;
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
-  pJobName char(11);
+  pJobName char(10);
   PSubSys char(10);
 end-pr;
 dcl-pr QCMDEXC extpgm('QCMDEXC'); // API de IBM i
@@ -148,7 +148,7 @@ dou *in03 or *in12;
   endif;
   // Validacion del Programa o Menu Inicial del Usuario
 
-  QCMDEXC(Cmd : %len(%trim(Cmd)) : ' ');
+  QCMDEXC(Cmd : %len(%trim(Cmd)));
 
   leave;
 
