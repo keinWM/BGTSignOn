@@ -134,26 +134,49 @@ dou *in03 or *in12;
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
 
       dow *on;
-        RESP = 'Y';
-
         exfmt INFORMAT;
 
         if *in03;
           *in03 = *off;
 
+          RESP = 'Y';
+
           exfmt CONFIRM;
 
           if *in12;
             *in12 = *off;
+
+            iter;
+          elseif RESP = 'N';
             iter;
           elseif RESP = 'Y';
             leave;
           endif;
         endif;
 
-        clear PASS;
+        dow *on;
+          exfmt CHANGEPWD;
 
-        exfmt CHANGEPWD;
+          if *in03 or *in12;
+            *in03 = *off;
+            *in12 = *off;
+
+            leave;
+          elseif *in09;
+            dow *on;
+              exfmt PASSRULES;
+
+              if *in03 or *in12;
+                *in03 = *off;
+                *in12 = *off;
+
+                leave;
+              endif;
+
+            enddo;
+          endif;
+
+        enddo;
       enddo;
       
       iter;
