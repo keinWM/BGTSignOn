@@ -116,7 +116,7 @@ dou *in03 or *in12;
     BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
 
     if pStatus = '*DISABLED';
-      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
       MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
     elseif %char(pSignOnInvalid) = '2';
       MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
@@ -137,7 +137,7 @@ dou *in03 or *in12;
 
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
-      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+      MSGTXT = 'El Usuario ' + %trim(USER) + ' está Deshabilitado';
       iter;
 
     when AuthResult = '4';
@@ -202,7 +202,7 @@ dou *in03 or *in12;
     
     other;
       if pStatus = '*DISABLED';
-        BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
+        BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
         MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
       elseif %char(pSignOnInvalid) = '2';
         MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
