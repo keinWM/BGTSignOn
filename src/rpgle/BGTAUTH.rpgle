@@ -45,7 +45,7 @@ dcl-s ProfileHandle char(12);
 dcl-s PasswordLen int(10);
 dcl-s CCSID int(10) inz(37);
 
-PasswordLen = 10;
+PasswordLen = %len(%trim(pPass));
 
 QSYGETPH(pUser : pPass : ProfileHandle : QUSEC : PasswordLen : CCSID);
 
@@ -56,13 +56,15 @@ if QUSEC.BytesAvail > 0;
       pResult = '3';
     when QUSEC.MsgId = 'CPF22E4'; // PASSWORD_EXPIRED
       pResult = '4';
+    when QUSEC.MsgId = 'CPF22E5'; // NOT_PASSWORD
+      pResult = '5';
     other;
-      pResult = '0';
+      pResult = '0'; // FAIL
   endsl;
 
 else;
 
-  pResult = '1'; // OK
+  pResult = '1'; // SUCCESS
 
   clear QUSEC;
 
@@ -76,14 +78,14 @@ else;
         pResult = '3';
       when QUSEC.MsgId = 'CPF22E4'; // PASSWORD_EXPIRED
         pResult = '4';
+      when QUSEC.MsgId = 'CPF22E5'; // NOT_PASSWORD
+        pResult = '5';
       other;
-        pResult = '0';
+        pResult = '0'; // FAIL
     endsl;
   else;
-    pResult = '1';
+    pResult = '1'; // SUCCESS
   endif;
-
-  // QSYRLSPH(ProfileHandle : QUSEC);
 endif;
 
 *inlr = *on; // lr - Last Record

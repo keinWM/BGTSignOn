@@ -66,6 +66,7 @@ dcl-s pDaysExp zoned(3:0);
 dcl-s pPassExp char(3);
 dcl-s pStatus char(10);
 dcl-s pSignOnInvalid zoned(3:0);
+dcl-s DummyPass char(10);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
@@ -109,29 +110,42 @@ dou *in03 or *in12;
     MSGTXT = 'Debe Ingresar un Usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
-    MSGTXT = 'Debe Ingresar una Contrase¦a.';
+    BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
+    DummyPass = 'xxxxxxxxxx';
+    BGTAUTH(USER : DummyPass : AuthResult); // Validacion de Usuario y Contraseña
+    BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
+
+    if pStatus = '*DISABLED';
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
+      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+    elseif %char(pSignOnInvalid) = '2';
+      MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
+    else;
+      MSGTXT = 'Debe Ingresar una Contrase¦a.';
+    endif;
+
     iter;
   endif;
   // Validar Campos Vacíos
-
-  // Validacion de Usuario y Contraseña
-  BGTAUTH(USER : PASS : AuthResult);
-
-  BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid);
-
-  LCHGPWD = %char(%date(pPassChgDate):*dmy);
-  SIGNDL = %char(%date(pPreSignOn):*dmy);
-  SIGNTL = %char(%time(pPreSignOn):*hms);
+  
+  BGTAUTH(USER : PASS : AuthResult); // Validacion de Usuario y Contraseña
+  BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
 
   select;
     when AuthResult = '1';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
+
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
-      MSGTXT = 'Perfil Deshabilitado';
+      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
       iter;
+
     when AuthResult = '4';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
+
+      LCHGPWD = %char(%date(pPassChgDate):*dmy);  // Ultimo Cambio de Clave
+      SIGNDL = %char(%date(pPreSignOn):*dmy);     // Fecha de Ultimo Inicio
+      SIGNTL = %char(%time(pPreSignOn):*hms);     // Hora de Ultimo Inicio
 
       dow *on;
         exfmt INFORMAT;
@@ -180,9 +194,23 @@ dou *in03 or *in12;
       enddo;
       
       iter;
+    
+    when AuthResult = '5';
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'NOT_PASSWORD');
+      MSGTXT = 'No es posible iniciar sesión con este perfil.';
+      iter;
+    
     other;
-      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
-      MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
+      if pStatus = '*DISABLED';
+        BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
+        MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+      elseif %char(pSignOnInvalid) = '2';
+        MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
+      else ;
+        BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
+        MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
+      endif;    
+
       iter;
   endsl;
   // Validacion de Usuario y Contraseña
