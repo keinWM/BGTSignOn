@@ -37,13 +37,12 @@ dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
 end-pr;
 dcl-pr BGTUSRSTS extpgm('BGTUSRSTS');
   pUser char(10);
-  pPreSignOn char(19);
-  pPassChgDate char(19);
-  pDatePassExp char(19);
-  pDaysExp char(2);
+  pPreSignOn timestamp;
+  pPassChgDate timestamp;
+  pDaysExp zoned(3:0);
   pPassExp char(3);
   pStatus char(8);
-  pSignOnInvalid char(1);
+  pSignOnInvalid zoned(3:0);
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);

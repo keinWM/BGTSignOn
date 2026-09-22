@@ -40,20 +40,6 @@ exec sql
   from QSYS2.USER_INFO
   where AUTHORIZATION_NAME = :pUser;
 
-// dsply pUser;
-// dsply %char(pPreSignOn);
-// dsply %char(pPassChgDate);
-// dsply %char(pDaysExp);
-// dsply pPassExp;
-// dsply pStatus;
-// dsply %char(pSignOnInvalid);
-
-if sqlcode = 0;
-  dsply 'SELECT OK';
-else;
-  dsply 'SELECT ERROR';
-endif;
-
 *inlr = *on;
 
 return;
