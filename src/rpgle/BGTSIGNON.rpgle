@@ -137,7 +137,7 @@ dou *in03 or *in12;
 
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
-      MSGTXT = 'El Usuario ' + %trim(USER) + ' está Deshabilitado';
+      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
       iter;
 
     when AuthResult = '4';
