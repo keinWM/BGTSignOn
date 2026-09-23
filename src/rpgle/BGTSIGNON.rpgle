@@ -110,17 +110,21 @@ dou *in03 or *in12;
     MSGTXT = 'Debe Ingresar un Usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
-    BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
     DummyPass = 'xxxxxxxxxx';
     BGTAUTH(USER : DummyPass : AuthResult); // Validacion de Usuario y Contraseña
     BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
 
-    if pStatus = '*DISABLED';
+    if AuthResult = '3';
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
+      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+    elseif pStatus = '*DISABLED';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
       MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
     elseif %char(pSignOnInvalid) = '2';
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
       MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
     else;
+      BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
       MSGTXT = 'Debe Ingresar una Contrase¦a.';
     endif;
 
@@ -205,6 +209,7 @@ dou *in03 or *in12;
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
         MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
       elseif %char(pSignOnInvalid) = '2';
+        BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
         MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
       else ;
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
