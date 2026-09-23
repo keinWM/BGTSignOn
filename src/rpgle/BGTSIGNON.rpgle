@@ -57,9 +57,12 @@ end-pr;
 
 // Declaracion Variables
 dcl-s AuthResult char(1);
+
 dcl-s InlPgm char(20);
 dcl-s InlMnu char(10);
+
 dcl-s Cmd char(50);
+
 dcl-s pPreSignOn timestamp;
 dcl-s pPassChgDate timestamp;
 dcl-s pDaysExp zoned(3:0);
@@ -218,18 +221,18 @@ dou *in03 or *in12;
 
       iter;
   endsl;
-  // Validacion de Usuario y Contraseña
 
   // Validacion del Programa o Menu Inicial del Usuario
   BGTGETPRF(USER : InlPgm : InlMnu);
+
   if %trim(InlPgm) <> '*NONE';
     Cmd = 'CALL ' + %trim(InlPgm);
   else;
     Cmd = 'GO ' + %trim(InlMnu);
   endif;
-  // Validacion del Programa o Menu Inicial del Usuario
 
   QCMDEXC(Cmd : %len(%trim(Cmd)));
+  // Validacion del Programa o Menu Inicial del Usuario
 
   leave;
 
