@@ -1,0 +1,47 @@
+      A                                     DSPSIZ(24 80 *DS3)
+      A
+      A         R ACTIVEJOB
+      A
+      A                                     CA03(03)
+      A                                     CA12(12)
+      A
+      A                                01 29'Sesión Activa Detectada'
+      A                                     COLOR(WHT)
+      A
+      A                                02 62'Sistema:'
+      A           SYSNAME       10A  O 02 72
+      A
+      A                                04 02'La cola de mensajes del usuario se'
+      A                                     COLOR(WHT)
+      A                                04 37'encuentra asociada a otro trabajo.'
+      A                                     COLOR(WHT)
+      A
+      A                                06 04'Usuario . . . . . . . :'
+      A           USER          10A  O 06 29
+      A                                07 04'Trabajo Activo  . . . :'
+      A           CURJOB        30A  O 07 29
+      A                                09 04'Sesiones Activas  . . :'
+      A           ACTSESS       02S 0O 09 29
+      A
+      A                                15 02'Se detectó otra sesión activa'
+      A                                     COLOR(WHT)
+      A                                15 32'asociada a este perfil de usuario.'
+      A                                     COLOR(WHT)
+      A                                16 02'Es posible que una sesión anterior'
+      A                                     COLOR(WHT)
+      A                                16 37'no haya finalizado correctamente.'
+      A                                     COLOR(WHT)
+      A
+      A                                19 02'Pulse Intro para continuar.'
+      A                                     COLOR(BLU)
+      A
+      A                                21 02'F3=Salir'
+      A                                     COLOR(BLU)
+      A                                21 13'F12=Cancelar'
+      A                                     COLOR(BLU)
+      A                                23 01'RIF: J-30144204-0'
+      A                                     COLOR(WHT)
+      A                                24 01'Banco de la Gente Emprendedora'
+      A                                     COLOR(WHT)
+      A                                24 60'Plataforma Core IBM i'
+      A                                     COLOR(WHT)

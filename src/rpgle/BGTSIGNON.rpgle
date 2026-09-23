@@ -15,6 +15,7 @@ dcl-f CHGPWD workstn;
 dcl-f MSGCONF workstn;
 dcl-f MSGINF workstn;
 dcl-f PWDRULES workstn;
+dcl-f MSGACTJOB workstn;
 // Declaracion Vistas
 
 // Declaracion Prototipos
@@ -43,6 +44,12 @@ dcl-pr BGTUSRSTS extpgm('BGTUSRSTS');
   pPassExp char(3);
   pStatus char(10);
   pSignOnInvalid zoned(3:0);
+end-pr;
+dcl-pr BGTACTJOB extpgm('BGTACTJOB');
+  pUser char(10);
+  pCurrentJob char(10);
+  pActSess packed(2:0);
+  pJobNA char(30);
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
@@ -141,6 +148,9 @@ dou *in03 or *in12;
   select;
     when AuthResult = '1';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
+      BGTACTJOB(USER : JOBNAME : ACTSESS : CURJOB);
+
+      exfmt ACTIVEJOB;
 
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
