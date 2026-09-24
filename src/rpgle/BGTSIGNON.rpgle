@@ -156,7 +156,7 @@ dou *in03 or *in12;
       if %trim(LimitSess) <> *blanks;
         if %trim(LimitSess) = '*YES';
           if ACTSESS > 1;
-            MSGTXT = '*YES';
+            MSGTXT = 'Tienes permitido 1 sesión simultaneas';
             iter;
           endif;
         elseif %check('0123456789' : %trim(LimitSess)) = 0;
