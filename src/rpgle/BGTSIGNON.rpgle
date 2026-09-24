@@ -49,6 +49,7 @@ dcl-pr BGTACTJOB extpgm('BGTACTJOB');
   pUser char(10);
   pCurrentJob char(10);
   pActSess packed(2:0);
+  pLimitSess char(10);
   pJobNA char(30);
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
@@ -77,6 +78,8 @@ dcl-s pPassExp char(3);
 dcl-s pStatus char(10);
 dcl-s pSignOnInvalid zoned(3:0);
 dcl-s DummyPass char(10);
+
+dcl-s LimitSess char(10);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
@@ -148,9 +151,27 @@ dou *in03 or *in12;
   select;
     when AuthResult = '1';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
-      BGTACTJOB(USER : JOBNAME : ACTSESS : CURJOB);
+      BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
 
-      exfmt ACTIVEJOB;
+      if %trim(LimitSess) <> *blanks;
+        if %trim(LimitSess) = '*YES';
+          if ACTSESS > 1;
+            MSGTXT = '*YES';
+            iter;
+          endif;
+        elseif %check('0123456789' : %trim(LimitSess)) = 0;
+          if %dec(%trim(LimitSess): 2:0) > 0;
+            if ACTSESS > %dec(%trim(LimitSess): 2:0);
+              MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
+              iter;
+            endif;
+          endif;
+        endif;
+      endif;
+
+      if ACTSESS > 1;
+        exfmt ACTIVEJOB;
+      endif;
 
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
