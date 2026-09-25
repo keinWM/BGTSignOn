@@ -58,7 +58,7 @@ dcl-pr BGTCHGPWD extpgm('BGTCHGPWD');
   pPassnew char(10);
   pPassnewV char(10);
   pResult char(1);
-  pMsgId char(128);
+  pMsgId char(7);
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
@@ -92,7 +92,7 @@ dcl-s LimitSess char(10);
 dcl-s MaxSess packed(2:0);
 
 dcl-s Result char(1);
-dcl-s MsgId char(128);
+dcl-s MsgId char(7);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
@@ -260,6 +260,9 @@ dou *in03 or *in12;
             iter;
           endif;
 
+          BGTCHGPWD(USER : PASS : PASSNEW : PASSNEWV : Result : MsgId);
+          
+          iter;
         enddo;
       enddo;
       
