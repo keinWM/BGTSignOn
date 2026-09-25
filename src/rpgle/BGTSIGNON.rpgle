@@ -4,7 +4,7 @@
 // Autor    : Kelvin J. Infante E.
 // Fecha    : 2026-09-11
 // Objetivo : Inicio de Sesion al QSYGETPH - BGTSIGNON
-// Proyecto : BGTSIGNON
+// Proyecto : BGTSignOn
 // ---------------------------------------------------------------
 
 ctl-opt dftactgrp(*no);
@@ -52,6 +52,14 @@ dcl-pr BGTACTJOB extpgm('BGTACTJOB');
   pLimitSess char(10);
   pJobNA char(30);
 end-pr;
+dcl-pr BGTCHGPWD extpgm('BGTCHGPWD');
+  pUser char(10);
+  pPass char(10);
+  pPassnew char(10);
+  pPassnewV char(10);
+  pResult char(1);
+  pMsgId char(128);
+end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
   pJobName char(10);
@@ -80,6 +88,11 @@ dcl-s pSignOnInvalid zoned(3:0);
 dcl-s DummyPass char(10);
 
 dcl-s LimitSess char(10);
+
+dcl-s MaxSess packed(2:0);
+
+dcl-s Result char(1);
+dcl-s MsgId char(128);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
@@ -102,8 +115,9 @@ TIME = %char(%time() : *hms);
 // Bucle Principal
 dou *in03 or *in12;
 
-  // Limpiar Campo de Contraseña
-  PASS = *blanks;
+  // Limpiar Variables
+  clear PASS;
+  clear MSGTXT;
   
   exfmt SIGNON;
 
@@ -112,15 +126,13 @@ dou *in03 or *in12;
     leave;
   endif;
 
-  // Limpiar Variables MSGTXT
-  clear MSGTXT;
 
   // Validar Campos Vacíos
   if %trim(USER) = *blanks and %trim(PASS) = *blanks;
-    MSGTXT = 'Se Requiere Información de Inicio de Sesión.';
+    MSGTXT = 'Se requiere información de inicio de sesión.';
     iter;
   elseif %trim(USER) = *blanks;
-    MSGTXT = 'Debe Ingresar un Usuario.';
+    MSGTXT = 'Debe ingresar un usuario.';
     iter;
   elseif %trim(PASS) = *blanks;
     DummyPass = 'xxxxxxxxxx';
@@ -129,16 +141,16 @@ dou *in03 or *in12;
 
     if AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
-      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+      MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado.';
     elseif pStatus = '*DISABLED';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
-      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+      MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado.';
     elseif %char(pSignOnInvalid) = '2';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
-      MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
+      MSGTXT = 'Proximo intento inválido, se deshabilitara.';
     else;
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
-      MSGTXT = 'Debe Ingresar una Contrase¦a.';
+      MSGTXT = 'Debe ingresar una contrase¦a.';
     endif;
 
     iter;
@@ -151,6 +163,9 @@ dou *in03 or *in12;
   select;
     when AuthResult = '1';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
+
+      clear MaxSess;
+
       BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
 
       if %trim(LimitSess) <> *blanks;
@@ -160,8 +175,10 @@ dou *in03 or *in12;
             iter;
           endif;
         elseif %check('0123456789' : %trim(LimitSess)) = 0;
-          if %dec(%trim(LimitSess): 2:0) > 0;
-            if ACTSESS > %dec(%trim(LimitSess): 2:0);
+          MaxSess = %dec(%trim(LimitSess): 2:0);
+
+          if MaxSess > 0;
+            if ACTSESS > MaxSess;
               MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
               iter;
             endif;
@@ -175,7 +192,7 @@ dou *in03 or *in12;
 
     when AuthResult = '3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
-      MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+      MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado';
       iter;
 
     when AuthResult = '4';
@@ -207,6 +224,11 @@ dou *in03 or *in12;
         endif;
 
         dow *on;
+
+          clear PASS;
+          clear PASSNEW;
+          clear PASSNEWV;
+
           exfmt CHANGEPWD;
 
           if *in03 or *in12;
@@ -224,8 +246,18 @@ dou *in03 or *in12;
 
                 leave;
               endif;
-
             enddo;
+          endif;
+
+          if %trim(PASS) = *blanks and %trim(PASSNEW) = *blanks and %trim(PASSNEWV) = *blanks;
+            MSGTXT = 'Tiene que llenar todos los campos.';
+            iter;
+          elseif %trim(PASSNEW) = *blanks and %trim(PASSNEWV) = *blanks;
+            MSGTXT = 'Debes de colocar la nueva contrase¦a.';
+            iter;
+          elseif %trim(PASSNEWV) = *blanks;
+            MSGTXT = 'Debes confirmar la nueva contrase¦a.';
+            iter;
           endif;
 
         enddo;
@@ -241,13 +273,13 @@ dou *in03 or *in12;
     other;
       if pStatus = '*DISABLED';
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
-        MSGTXT = 'Perfil de Usuario ' + %trim(USER) + ' Deshabilitado';
+        MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado';
       elseif %char(pSignOnInvalid) = '2';
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
-        MSGTXT = 'Proximo Intento Inválido, se Deshabilitara';
+        MSGTXT = 'Proximo intento inválido, se deshabilitara';
       else ;
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
-        MSGTXT = 'Usuario o Contrase¦a Incorrectos.';
+        MSGTXT = 'Usuario o contrase¦a incorrectos.';
       endif;    
 
       iter;
