@@ -56,9 +56,7 @@ dcl-pr BGTCHGPWD extpgm('BGTCHGPWD');
   pUser char(10);
   pPass char(10);
   pPassnew char(10);
-  pPassnewV char(10);
-  pResult char(1);
-  pMsgId char(7);
+  pResult char(2);
 end-pr;
 dcl-pr RTVSIGN extpgm('RTVSIGNON'); // CLLE
   pSysName char(10);
@@ -91,8 +89,7 @@ dcl-s LimitSess char(10);
 
 dcl-s MaxSess packed(2:0);
 
-dcl-s Result char(1);
-dcl-s MsgId char(7);
+dcl-s ChgPassResult char(2);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
@@ -117,7 +114,6 @@ dou *in03 or *in12;
 
   // Limpiar Variables
   clear PASS;
-  clear MSGTXT;
   
   exfmt SIGNON;
 
@@ -203,6 +199,8 @@ dou *in03 or *in12;
       SIGNTL = %char(%time(pPreSignOn):*hms);     // Hora de Ultimo Inicio
 
       dow *on;
+        clear MSGTXT;
+
         exfmt INFORMAT;
 
         if *in03;
@@ -258,9 +256,62 @@ dou *in03 or *in12;
           elseif %trim(PASSNEWV) = *blanks;
             MSGTXT = 'Debes confirmar la nueva contrase¦a.';
             iter;
-          endif;
+          elseif %trim(PASSNEW) <> %trim(PASSNEWV);
+            MSGTXT = 'La contrase¦a nueva y la contrase¦a de verificación no son iguales.';
+            iter;
+          else;
+            BGTCHGPWD(USER : PASS : PASSNEW : ChgPassResult);
 
-          BGTCHGPWD(USER : PASS : PASSNEW : PASSNEWV : Result : MsgId);
+            select;
+              when ChgPassResult = '01';
+                BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_CHANGE');
+
+                clear MaxSess;
+
+                BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
+
+                if ACTSESS > 1;
+                  exfmt ACTIVEJOB;
+                endif;
+
+                BGTGETPRF(USER : InlPgm : InlMnu);
+
+                if %trim(InlPgm) <> '*NONE';
+                  Cmd = 'CALL ' + %trim(InlPgm);
+                else;
+                  Cmd = 'GO ' + %trim(InlMnu);
+                endif;
+
+                QCMDEXC(Cmd : %len(%trim(Cmd)));
+
+                *inlr = *on;
+
+                return;
+              when ChgPassResult = 'E2';
+                MSGTXT = 'La contrase¦a actual no es correcta.';
+                iter;
+              when ChgPassResult = '56';
+                MSGTXT = 'La contrase¦a nueva no puede ser la misma que la contraseña actual.';
+                iter;
+              when ChgPassResult = 'C2';
+                MSGTXT = 'Contrase¦a con menos de 8 caracteres.';
+                iter;
+              when ChgPassResult = 'C3';
+                MSGTXT = 'Contrase¦a con más de 8 caracteres.';
+                iter;
+              when ChgPassResult = 'C4';
+                MSGTXT = 'La contrase¦a nueva coincide con una de las 6 contraseñas anteriores.';
+                iter;
+              when ChgPassResult = 'C8';
+                MSGTXT = 'Hay un mismo carácter en la misma posición que en la contraseña actual.';
+                iter;
+              when ChgPassResult = 'D0';
+                MSGTXT = 'La contrase¦a contiene un carácter repetido consecutivamente.';
+                iter;
+              other;
+                MSGTXT = 'No se pudo cambiar la contrase¦a';
+            endsl;
+          endif;
           
           iter;
         enddo;

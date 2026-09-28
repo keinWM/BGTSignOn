@@ -16,6 +16,14 @@ dcl-pi *n; // pi - Procedure Interface
   pResult char(1);
 end-pi;
 
+dcl-ds QUSEC qualified;
+  BytesProv int(10) inz(%size(QUSEC));
+  BytesAvail int(10) inz(0);
+  MsgId char(7);
+  Reserved char(1);
+  MsgData char(128);
+end-ds;
+
 dcl-pr QSYGETPH extpgm('QSYGETPH');
   UserId char(10) const;
   Password char(10) const;
@@ -32,14 +40,6 @@ dcl-pr QSYRLSPH extpgm('QSYRLSPH');
   ProfileHdl char(12);
   ErrorCode likeDS(QUSEC);
 end-pr;
-
-dcl-ds QUSEC qualified;
-  BytesProv int(10) inz(%size(QUSEC));
-  BytesAvail int(10) inz(0);
-  MsgId char(7);
-  Reserved char(1);
-  MsgData char(128);
-end-ds;
 
 dcl-s ProfileHandle char(12);
 dcl-s PasswordLen int(10);
