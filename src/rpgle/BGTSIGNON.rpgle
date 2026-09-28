@@ -273,20 +273,6 @@ dou *in03 or *in12;
                 if ACTSESS > 1;
                   exfmt ACTIVEJOB;
                 endif;
-
-                BGTGETPRF(USER : InlPgm : InlMnu);
-
-                if %trim(InlPgm) <> '*NONE';
-                  Cmd = 'CALL ' + %trim(InlPgm);
-                else;
-                  Cmd = 'GO ' + %trim(InlMnu);
-                endif;
-
-                QCMDEXC(Cmd : %len(%trim(Cmd)));
-
-                *inlr = *on;
-
-                return;
               when ChgPassResult = 'E2';
                 MSGTXT = 'La contrase¦a actual no es correcta.';
                 iter;
@@ -310,6 +296,7 @@ dou *in03 or *in12;
                 iter;
               other;
                 MSGTXT = 'No se pudo cambiar la contrase¦a';
+                iter;
             endsl;
           endif;
           
