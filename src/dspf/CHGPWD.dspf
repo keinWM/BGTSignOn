@@ -17,6 +17,7 @@
       A           LCHGPWD       08A  O 04 47
       A
       A                                07 02'Teclee contrase¦a, pulse INTRO.'
+      A                                     COLOR(BLU)
       A                                09 04'Contrase¦a actual'
       A                                09 22'. . . . . . . . . . . .'
       A           PASS          10A  B 09 47DSPATR(ND)

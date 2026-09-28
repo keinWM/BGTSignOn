@@ -29,33 +29,17 @@ dcl-ds APIERROR qualified;
   BytesProv int(10) inz(%size(APIERROR));
   BytesAvail int(10) inz(0);
   MsgId char(7);
-  Preserved char(1);
+  Reserved char(1);
   MsgData char(128);
 end-ds;
 
-// clear pResult;
-// clear pMsgId;
 clear APIERROR;
 
 APIERROR.BytesProv = %size(APIERROR);
 
-// if pPass = pPassNew;
-  // pResult = '0';
-  // pMsgId = 'SAME_PWD';
+QSYCHGPW('*CURRENT' : pPass : pPassNew : APIERROR);
 
-  // *inlr = *on;
-  // return;
-// elseif pPassNew <> pPassNewV;
-  // pResult = '0';
-  // pMsgId = 'NO_MATCH';
-
-  // *inlr = *on;
-  // return;
-// endif;
-
-QSYCHGPW(pUser : pPass : pPassNew : APIERROR);
-
-dsply ('MsgId= ' + %char(APIERROR.MsgId));
+dsply ('MsgId = ' + APIERROR.MsgId);
 
 *inlr = *on;
 
