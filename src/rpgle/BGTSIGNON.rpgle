@@ -10,19 +10,19 @@
 ctl-opt dftactgrp(*no);
 
 // Declaracion Vistas
-dcl-f BGTSIGNON workstn;
-dcl-f CHGPWD workstn;
-dcl-f MSGCONF workstn;
-dcl-f MSGINF workstn;
-dcl-f PWDRULES workstn;
-dcl-f MSGACTJOB workstn;
+dcl-f BGTSIGNON workstn;  // Inicio de Sesión
+dcl-f CHGPWD workstn;     // Cambio de Contraseña
+dcl-f MSGCONF workstn;    // Confirmacion para Salir del CHGPWD
+dcl-f MSGINF workstn;     // Mensaje Informativo de Cambio de Clave
+dcl-f PWDRULES workstn;   // Reglas para el Cambio de Clave
+dcl-f MSGACTJOB workstn;  // Trabajos Activos del Usuario
 // Declaracion Vistas
 
 // Declaracion Prototipos
 dcl-pr BGTAUTH extpgm('BGTAUTH'); // RPGLE
   pUser char(10);
   pPass char(10);
-  pResult char(1);
+  pResult char(2);
 end-pr;
 dcl-pr BGTGETPRF extpgm('BGTGETPRF'); // CLLE
   pUser char(10);
@@ -36,7 +36,7 @@ dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
   pJobName char(10);
   pResult char(20) const;
 end-pr;
-dcl-pr BGTUSRSTS extpgm('BGTUSRSTS');
+dcl-pr BGTUSRSTS extpgm('BGTUSRSTS'); // SQLRPGLE
   pUser char(10);
   pPreSignOn timestamp;
   pPassChgDate timestamp;
@@ -45,14 +45,14 @@ dcl-pr BGTUSRSTS extpgm('BGTUSRSTS');
   pStatus char(10);
   pSignOnInvalid zoned(3:0);
 end-pr;
-dcl-pr BGTACTJOB extpgm('BGTACTJOB');
+dcl-pr BGTACTJOB extpgm('BGTACTJOB'); // SQLRPGLE
   pUser char(10);
   pCurrentJob char(10);
   pActSess packed(2:0);
   pLimitSess char(10);
   pJobNA char(30);
 end-pr;
-dcl-pr BGTCHGPWD extpgm('BGTCHGPWD');
+dcl-pr BGTCHGPWD extpgm('BGTCHGPWD'); // RPGLE
   pUser char(10);
   pPass char(10);
   pPassnew char(10);
@@ -70,7 +70,7 @@ end-pr;
 // Declaracion Prototipos
 
 // Declaracion Variables
-dcl-s AuthResult char(1);
+dcl-s AuthResult char(2);
 
 dcl-s InlPgm char(20);
 dcl-s InlMnu char(10);
@@ -86,15 +86,14 @@ dcl-s pSignOnInvalid zoned(3:0);
 dcl-s DummyPass char(10);
 
 dcl-s LimitSess char(10);
-
 dcl-s MaxSess packed(2:0);
 
 dcl-s ChgPassResult char(2);
+dcl-s ContinueLogin ind inz(*off);
 // Declaracion Variables
 
 // Informacion de IBM (dinámica)
-RTVSIGN(SYSNAME : JOBNAME : SUBSYS);
-
+RTVSIGN(SYSNAME : JOBNAME : SUBSYS); // Sistema, Subsistema, Pantalla
 select;
   when %subst(SYSNAME:1:1) = 'P';
     ENVIRON = 'PRODUCCION';
@@ -103,22 +102,18 @@ select;
   when %subst(SYSNAME:1:1) = 'D';
     ENVIRON = 'DESARROLLO';
 endsl;
-
-DATE = %char(%date() : *dmy);
-TIME = %char(%time() : *hms);
+DATE = %char(%date() : *dmy); // Fecha
+TIME = %char(%time() : *hms); // Hora
 // Informacion de IBM (dinámica)
-
 
 // Bucle Principal
 dou *in03 or *in12;
 
-  // Limpiar Variables
-  clear PASS;
+  clear PASS; // Limpiar Variable
   
-  exfmt SIGNON;
+  exfmt SIGNON; // Inicio de Sesión
 
-  // Salir del Sign On al presionar F3 o F12
-  if *in03 or *in12;
+  if *in03 or *in12; // Salir del SIGNON al presionar F3 o F12
     leave;
   endif;
 
@@ -135,7 +130,7 @@ dou *in03 or *in12;
     BGTAUTH(USER : DummyPass : AuthResult); // Validacion de Usuario y Contraseña
     BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
 
-    if AuthResult = '3';
+    if AuthResult = 'E3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
       MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado.';
     elseif pStatus = '*DISABLED';
@@ -157,46 +152,22 @@ dou *in03 or *in12;
   BGTUSRSTS(USER : pPreSignOn : pPassChgDate : pDaysExp : pPassExp: pStatus : pSignOnInvalid); // Validacion de Estatus de Usuario
 
   select;
-    when AuthResult = '1';
+    when AuthResult = '01';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
 
-      clear MaxSess;
-
-      BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
-
-      if %trim(LimitSess) <> *blanks;
-        if %trim(LimitSess) = '*YES';
-          if ACTSESS > 1;
-            MSGTXT = 'Tienes permitido 1 sesión simultaneas';
-            iter;
-          endif;
-        elseif %check('0123456789' : %trim(LimitSess)) = 0;
-          MaxSess = %dec(%trim(LimitSess): 2:0);
-
-          if MaxSess > 0;
-            if ACTSESS > MaxSess;
-              MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
-              iter;
-            endif;
-          endif;
-        endif;
-      endif;
-
-      if ACTSESS > 1;
-        exfmt ACTIVEJOB;
-      endif;
-
-    when AuthResult = '3';
+    when AuthResult = 'E3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
       MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado';
       iter;
 
-    when AuthResult = '4';
+    when AuthResult = 'E4';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_EXPIRED');
 
       LCHGPWD = %char(%date(pPassChgDate):*dmy);  // Ultimo Cambio de Clave
       SIGNDL = %char(%date(pPreSignOn):*dmy);     // Fecha de Ultimo Inicio
       SIGNTL = %char(%time(pPreSignOn):*hms);     // Hora de Ultimo Inicio
+
+      ContinueLogin = *off;
 
       dow *on;
         clear MSGTXT;
@@ -267,13 +238,9 @@ dou *in03 or *in12;
               when ChgPassResult = '01';
                 BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_CHANGE');
 
-                clear MaxSess;
+                ContinueLogin = *on;
 
-                BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
-
-                if ACTSESS > 1;
-                  exfmt ACTIVEJOB;
-                endif;
+                leave;
               when ChgPassResult = 'E2';
                 MSGTXT = 'La contrase¦a actual no es correcta.';
                 iter;
@@ -300,14 +267,20 @@ dou *in03 or *in12;
                 iter;
             endsl;
           endif;
-          
-          iter;
         enddo;
+
+        if ContinueLogin;
+          leave;
+        endif;
       enddo;
-      
-      iter;
+
+      if ContinueLogin;
+        AuthResult = '01';
+      else;
+        iter;
+      endif;
     
-    when AuthResult = '5';
+    when AuthResult = 'E5';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'NOT_PASSWORD');
       MSGTXT = 'No es posible iniciar sesión con este perfil.';
       iter;
@@ -326,6 +299,34 @@ dou *in03 or *in12;
 
       iter;
   endsl;
+
+  // Validar si Existen Trabajos Activos
+  clear MaxSess;
+
+  BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
+
+  if %trim(LimitSess) <> *blanks;
+    if %trim(LimitSess) = '*YES';
+      if ACTSESS > 1;
+        MSGTXT = 'Tienes permitido 1 sesión simultaneas';
+        iter;
+      endif;
+    elseif %check('0123456789' : %trim(LimitSess)) = 0;
+      MaxSess = %dec(%trim(LimitSess): 2:0);
+
+      if MaxSess > 0;
+        if ACTSESS > MaxSess;
+          MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
+          iter;
+        endif;
+      endif;
+    endif;
+  endif;
+
+  if ACTSESS > 1;
+    exfmt ACTIVEJOB;
+  endif;
+  // Validar si Existen Trabajos Activos
 
   // Validacion del Programa o Menu Inicial del Usuario
   BGTGETPRF(USER : InlPgm : InlMnu);

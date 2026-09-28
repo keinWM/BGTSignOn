@@ -13,7 +13,7 @@ ctl-opt dftactgrp(*no);
 dcl-pi *n; // pi - Procedure Interface
   pUser char(10);
   pPass char(10);
-  pResult char(1);
+  pResult char(2);
 end-pi;
 
 dcl-ds QUSEC qualified;
@@ -53,18 +53,18 @@ if QUSEC.BytesAvail > 0;
 
   select;
     when QUSEC.MsgId = 'CPF22E3'; // PROFILE_DISABLED
-      pResult = '3';
+      pResult = 'E3';
     when QUSEC.MsgId = 'CPF22E4'; // PASSWORD_EXPIRED
-      pResult = '4';
+      pResult = 'E4';
     when QUSEC.MsgId = 'CPF22E5'; // NOT_PASSWORD
-      pResult = '5';
+      pResult = 'E5';
     other;
-      pResult = '0'; // FAIL
+      pResult = '00'; // FAIL
   endsl;
 
 else;
 
-  pResult = '1'; // SUCCESS
+  pResult = '01'; // SUCCESS
 
   clear QUSEC;
 
@@ -75,16 +75,16 @@ else;
   if QUSEC.BytesAvail > 0;
     select;
       when QUSEC.MsgId = 'CPF22E3'; // PROFILE_DISABLED
-        pResult = '3';
+        pResult = 'E3';
       when QUSEC.MsgId = 'CPF22E4'; // PASSWORD_EXPIRED
-        pResult = '4';
+        pResult = 'E4';
       when QUSEC.MsgId = 'CPF22E5'; // NOT_PASSWORD
-        pResult = '5';
+        pResult = 'E5';
       other;
-        pResult = '0'; // FAIL
+        pResult = '00'; // FAIL
     endsl;
   else;
-    pResult = '1'; // SUCCESS
+    pResult = '01'; // SUCCESS
   endif;
 endif;
 
