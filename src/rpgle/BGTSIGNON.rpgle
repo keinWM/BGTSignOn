@@ -217,6 +217,7 @@ dou *in03 or *in12;
           elseif RESP = 'N';
             iter;
           elseif RESP = 'Y';
+            clear USER;
             leave;
           endif;
         endif;
