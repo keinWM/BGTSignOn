@@ -28,7 +28,7 @@
       A                                13 34'. . . . . .'
       A           PASSNEWV      10A  B 13 47DSPATR(ND)
       A
-      A           MSGTXT        45A  O 16 02
+      A           MSGTXTCP      75A  O 16 02
       A                                     COLOR(WHT)
       A
       A                                21 02'F3=Salir'

@@ -27,7 +27,7 @@
       A                                13 02'Contrase¦a  . . . . . . . .'
       A           PASS          10A  B 13 32DSPATR(ND)
       A
-      A           MSGTXT        45A  O 16 02
+      A           MSGTXT        48A  O 16 02
       A                                     COLOR(WHT)
       A
       A                                10 57'GGGGGGGGGG'
