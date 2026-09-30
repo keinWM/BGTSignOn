@@ -16,7 +16,7 @@ dcl-pi *n;
   pDate char(08);
   pTime char(08);
   pJobName char(10);
-  pResult char(20);
+  pResult char(40);
 end-pi;
 
 USER = pUser;

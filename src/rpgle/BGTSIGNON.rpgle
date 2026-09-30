@@ -34,7 +34,7 @@ dcl-pr BGTSIGNLOG extpgm('BGTSIGNLOG'); // RPGLE
   pDate char(08);
   pTime char(08);
   pJobName char(10);
-  pResult char(20) const;
+  pResult char(40) const;
 end-pr;
 dcl-pr BGTUSRSTS extpgm('BGTUSRSTS'); // SQLRPGLE
   pUser char(10);
@@ -136,7 +136,7 @@ dou *in03 or *in12;
     elseif pStatus = '*DISABLED';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
       MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado.';
-    elseif %char(pSignOnInvalid) = '2';
+    elseif pSignOnInvalid = 2;
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PASSWORD_BLANK');
       MSGTXT = 'Proximo intento inválido, se deshabilitara.';
     else;
@@ -336,7 +336,7 @@ dou *in03 or *in12;
       if pStatus = '*DISABLED';
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'ACCOUNT_LOCKED');
         MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado.';
-      elseif %char(pSignOnInvalid) = '2';
+      elseif pSignOnInvalid = 2;
         BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'FAIL');
         MSGTXT = 'Proximo intento inválido, se deshabilitara.';
       else ;

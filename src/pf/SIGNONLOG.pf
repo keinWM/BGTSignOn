@@ -4,4 +4,4 @@
      A            LOGDATE       08A
      A            LOGTIME       08A
      A            JOBNAME       10A
-     A            RESULT        20A
+     A            RESULT        40A

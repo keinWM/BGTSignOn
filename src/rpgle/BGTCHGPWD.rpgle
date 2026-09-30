@@ -36,7 +36,7 @@ clear APIERROR;
 
 APIERROR.BytesProv = %size(APIERROR);
 
-QSYCHGPW('*CURRENT' : pPass : pPassNew : APIERROR);
+QSYCHGPW(pUser : pPass : pPassNew : APIERROR);
 
 if APIERROR.BytesAvail > 0;
   select;
