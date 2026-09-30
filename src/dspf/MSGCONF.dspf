@@ -9,7 +9,7 @@
       A
       A                                08 02'Salir del cambio de contrase¦a'
       A                                08 33'. . .'
-      A           RESP          01A  B 08 39
+      A           RESP          01A  B 08 39VALUES('Y' 'N')
       A
       A                                08 47'Y=Si, N=No'
       A
