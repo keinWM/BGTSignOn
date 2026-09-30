@@ -11,9 +11,9 @@ ctl-opt dftactgrp(*no);
 
 // Declaracion Vistas
 dcl-f BGTSIGNON workstn;  // Inicio de Sesión
-dcl-f CHGPWD workstn;     // Cambio de Contraseña
 dcl-f MSGCONF workstn;    // Confirmacion para Salir del CHGPWD
 dcl-f MSGINF workstn;     // Mensaje Informativo de Cambio de Clave
+dcl-f CHGPWD workstn;     // Cambio de Contraseña
 dcl-f PWDRULES workstn;   // Reglas para el Cambio de Clave
 dcl-f MSGACTJOB workstn;  // Trabajos Activos del Usuario
 // Declaracion Vistas
@@ -155,6 +155,30 @@ dou *in03 or *in12;
     when AuthResult = '01';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'SUCCESS');
 
+      // Validar si Existen Trabajos Activos
+      clear MaxSess;
+
+      BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
+
+      if %trim(LimitSess) <> *blanks;
+        if %trim(LimitSess) = '*YES';
+          if ACTSESS > 1;
+            MSGTXT = 'Tienes permitido 1 sesión simultaneas';
+            iter;
+          endif;
+        elseif %check('0123456789' : %trim(LimitSess)) = 0;
+          MaxSess = %dec(%trim(LimitSess): 2:0);
+
+          if MaxSess > 0;
+            if ACTSESS > MaxSess;
+              MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
+              iter;
+            endif;
+          endif;
+        endif;
+      endif;
+      // Validar si Existen Trabajos Activos
+
     when AuthResult = 'E3';
       BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'PROFILE_DISABLED');
       MSGTXT = 'Perfil de usuario ' + %trim(USER) + ' deshabilitado';
@@ -168,6 +192,30 @@ dou *in03 or *in12;
       SIGNTL = %char(%time(pPreSignOn):*hms);     // Hora de Ultimo Inicio
 
       ContinueLogin = *off;
+
+      // Validar si Existen Trabajos Activos
+      clear MaxSess;
+
+      BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
+
+      if %trim(LimitSess) <> *blanks;
+        if %trim(LimitSess) = '*YES';
+          if ACTSESS > 1;
+            MSGTXT = 'Tienes permitido 1 sesión simultaneas';
+            iter;
+          endif;
+        elseif %check('0123456789' : %trim(LimitSess)) = 0;
+          MaxSess = %dec(%trim(LimitSess): 2:0);
+
+          if MaxSess > 0;
+            if ACTSESS > MaxSess;
+              MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
+              iter;
+            endif;
+          endif;
+        endif;
+      endif;
+      // Validar si Existen Trabajos Activos
 
       dow *on;
         clear MSGTXT;
@@ -222,7 +270,7 @@ dou *in03 or *in12;
             MSGTXTCP = 'Tiene que llenar todos los campos.';
             iter;
           elseif %trim(PASSNEW) = *blanks and %trim(PASSNEWV) = *blanks;
-            MSGTXTCP = 'Debes de colocar la nueva contrase¦a.';
+            MSGTXTCP = 'Debes colocar la nueva contrase¦a.';
             iter;
           elseif %trim(PASSNEWV) = *blanks;
             MSGTXTCP = 'Debes confirmar la nueva contrase¦a.';
@@ -299,45 +347,31 @@ dou *in03 or *in12;
       iter;
   endsl;
 
-  // Validar si Existen Trabajos Activos
-  clear MaxSess;
-
-  BGTACTJOB(USER : JOBNAME : ACTSESS : LimitSess : CURJOB);
-
-  if %trim(LimitSess) <> *blanks;
-    if %trim(LimitSess) = '*YES';
-      if ACTSESS > 1;
-        MSGTXT = 'Tienes permitido 1 sesión simultaneas';
-        iter;
-      endif;
-    elseif %check('0123456789' : %trim(LimitSess)) = 0;
-      MaxSess = %dec(%trim(LimitSess): 2:0);
-
-      if MaxSess > 0;
-        if ACTSESS > MaxSess;
-          MSGTXT = 'Tienes permitido ' + %trim(LimitSess) + ' sesión simultaneas.';
-          iter;
-        endif;
-      endif;
-    endif;
-  endif;
-
   if ACTSESS > 1;
     exfmt ACTIVEJOB;
   endif;
-  // Validar si Existen Trabajos Activos
 
-  // Validacion del Programa o Menu Inicial del Usuario
+  // Validacion del PGM o MNU Inicial del Usuario
   BGTGETPRF(USER : InlPgm : InlMnu);
 
   if %trim(InlPgm) <> '*NONE';
     Cmd = 'CALL ' + %trim(InlPgm);
-  else;
+  elseif %trim(InlMnu) <> *blanks;
     Cmd = 'GO ' + %trim(InlMnu);
+  else;
+    BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'NO_INITIAL_OBJ');
+    MSGTXT = 'No existe un PGM o MNU inicial configurado';
+    iter;
   endif;
 
-  QCMDEXC(Cmd : %len(%trim(Cmd)));
-  // Validacion del Programa o Menu Inicial del Usuario
+  monitor;
+    QCMDEXC(Cmd : %len(%trim(Cmd)));
+  on-error;
+    BGTSIGNLOG(USER : DATE : TIME : JOBNAME : 'INITIAL_OBJECT_ERROR');
+    MSGTXT = 'Error al iniciar su entorno de trabajo.';
+    iter;
+  endmon;
+  // Validacion del PGM o MNU Inicial del Usuario
 
   leave;
 
